@@ -320,6 +320,8 @@ body {
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
   padding: 8px;
+  /* Ensure last row is never clipped by the browser bottom bar */
+  padding-bottom: max(80px, calc(env(safe-area-inset-bottom) + 80px));
 }
 
 .poster-card {
