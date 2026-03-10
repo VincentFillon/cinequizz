@@ -84,8 +84,9 @@ const SCORE_DATA = [
   { emoji: '🏆', message: 'Cinéphile absolu !' },
 ];
 
-const STORAGE_KEY     = 'trouves-le-film';
-const STORAGE_VERSION = 1;
+const STORAGE_KEY      = 'trouves-le-film';
+const STORAGE_VERSION  = 1;
+const CLUE_UNLOCKED_KEY = 'trouves-le-film-clue';
 
 // ============================================================
 // STATE
@@ -141,6 +142,9 @@ const DOM = {
   playerNameInput:  $('player-name'),
   btnStart:         $('btn-start'),
   btnResume:        $('btn-resume'),
+  welcomeClue:      $('welcome-clue'),
+  btnShowClue:      $('btn-show-clue'),
+  welcomeClueWord:  $('welcome-clue-word'),
   // Question
   qNumber:          $('q-number'),
   progressFill:     $('progress-fill'),
@@ -160,6 +164,7 @@ const DOM = {
   scoreName:        $('score-name'),
   btnResults:       $('btn-results'),
   btnReplay:        $('btn-replay'),
+  clueBlock:        $('clue-block'),
   confettiCanvas:   $('confetti-canvas'),
   // Results
   resultsSummary:   $('results-summary'),
@@ -205,7 +210,17 @@ function renderWelcome() {
     DOM.btnResume.style.display = 'none';
     DOM.playerNameInput.value = '';
   }
+  // Show clue button if player previously got 10/10
+  const clueUnlocked = localStorage.getItem(CLUE_UNLOCKED_KEY) === '1';
+  DOM.welcomeClue.style.display     = clueUnlocked ? '' : 'none';
+  DOM.welcomeClueWord.style.display = 'none'; // always collapsed on load
 }
+
+DOM.btnShowClue.addEventListener('click', () => {
+  const visible = DOM.welcomeClueWord.style.display !== 'none';
+  DOM.welcomeClueWord.style.display = visible ? 'none' : '';
+  DOM.btnShowClue.textContent = visible ? '🔑 Revoir mon indice' : '🔑 Masquer l\'indice';
+});
 
 DOM.btnStart.addEventListener('click', () => {
   clearState();
@@ -403,7 +418,13 @@ function renderScore() {
     } else {
       DOM.scoreCount.textContent = score;
       DOM.progressFill.style.width = '100%';
-      if (score === 10) setTimeout(launchConfetti, 300);
+      if (score === 10) {
+        try { localStorage.setItem(CLUE_UNLOCKED_KEY, '1'); } catch (_) {}
+        DOM.clueBlock.style.display = '';
+        setTimeout(launchConfetti, 300);
+      } else {
+        DOM.clueBlock.style.display = 'none';
+      }
     }
   }
 
@@ -439,9 +460,8 @@ function renderResults() {
     const answer = STATE.answers[i];
     if (!answer) return;
 
-    const userMovie    = MOVIES.find(m => m.id === answer.movieId);
-    const correctMovie = MOVIES.find(m => m.id === q.answerId);
-    const icon         = answer.isCorrect ? '✓' : '✗';
+    const userMovie = MOVIES.find(m => m.id === answer.movieId);
+    const icon      = answer.isCorrect ? '✓' : '✗';
 
     const li = document.createElement('li');
     li.className = `result-row result-row--${answer.isCorrect ? 'correct' : 'wrong'}`;
@@ -449,9 +469,7 @@ function renderResults() {
       <div class="result-row__num">${icon} Question ${i + 1}</div>
       <div class="result-row__enigma">« ${q.enigma} »</div>
       <div class="result-row__answer">${movieLabel(userMovie)}</div>
-      ${!answer.isCorrect
-        ? `<div class="result-row__correct-answer">✓ Bonne réponse : ${movieLabel(correctMovie)}</div>`
-        : ''}
+      ${!answer.isCorrect ? `<div class="result-row__wrong-label">✗ Mauvaise réponse</div>` : ''}
     `;
     DOM.resultsList.appendChild(li);
   });
