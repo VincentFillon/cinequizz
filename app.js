@@ -71,17 +71,17 @@ const QUESTIONS = [
 ];
 
 const SCORE_DATA = [
-  { emoji: '💩', message: 'Zéro. Vraiment zéro.' },
-  { emoji: '😞', message: 'C\'était difficile, hein ?' },
-  { emoji: '😢', message: 'Aïe aïe aïe...' },
-  { emoji: '😕', message: 'Tu regardes des films ?' },
-  { emoji: '😐', message: 'On peut mieux faire...' },
-  { emoji: '👍', message: 'La moyenne, c\'est déjà ça !' },
-  { emoji: '🎉', message: 'Pas mal du tout !' },
-  { emoji: '🥉', message: 'Bien joué !' },
-  { emoji: '🥈', message: 'Très bon cinéphile !' },
-  { emoji: '🥇', message: 'Presque parfait !' },
-  { emoji: '🏆', message: 'Cinéphile absolu !' },
+  { gif: 'https://media1.tenor.com/m/s9QOQqA-aVYAAAAC/action-war.gif',                                          quote: '"You\'re so ugly you could be a modern art masterpiece!', film: 'Full Metal Jacket' },
+  { gif: 'https://media1.tenor.com/m/tT57ofXKP8MAAAAC/run-away.gif',                                            quote: '"Run away! Run away!"',                                   film: 'Monty Python and the Holy Grail' },
+  { gif: 'https://media1.tenor.com/m/iSYI2BQu-TIAAAAC/great-scott-back-to-the-future.gif',                      quote: '"Great Scott!"',                                          film: 'Back to the Future' },
+  { gif: 'https://media1.tenor.com/m/Iwgypq5HuxcAAAAC/arnold-schwarzenegger-predator.gif',                      quote: '"Get to the choppa!"',                                    film: 'Predator' },
+  { gif: 'https://media1.tenor.com/m/mvCOlk-A6MEAAAAC/ghostbusters-dogs-and-cats-living-together.gif',          quote: '"Dogs and cats living together... mass hysteria!"',       film: 'Ghostbusters' },
+  { gif: 'https://media1.tenor.com/m/izzBiUifngcAAAAC/yoda-do-or-do-not.gif',                                   quote: '"Do. Or do not. There is no try."',                       film: 'Star Wars' },
+  { gif: 'https://media1.tenor.com/m/95AGbCSEeY4AAAAC/always-look-on-the-bright-side-of-life-monty-python.gif', quote: '"Always look on the bright side of life."',               film: 'Life of Brian' },
+  { gif: 'https://media1.tenor.com/m/JNROTOuADA0AAAAC/gladiator-russell-crowe.gif',                             quote: '"Are you not entertained?"',                              film: 'Gladiator' },
+  { gif: 'https://media1.tenor.com/m/7GBKPeSQZPUAAAAC/die-hard-bruce-willis.gif',                               quote: '"Yippee-ki-yay!"',                                        film: 'Die Hard' },
+  { gif: 'https://media1.tenor.com/m/RkO3ytNjWUEAAAAC/highlander-there-can-be-only-one.gif',                    quote: '"There can be only one."',                                film: 'Highlander' },
+  { gif: 'https://media1.tenor.com/m/y0LVeURAIi4AAAAC/brothers-mission-from-god.gif',                           quote: '"We\'re on a mission from God."',                         film: 'The Blues Brothers' },
 ];
 
 const STORAGE_KEY      = 'trouves-le-film';
@@ -158,9 +158,10 @@ const DOM = {
   btnCancel:        $('btn-cancel'),
   btnConfirm:       $('btn-confirm'),
   // Score
-  scoreEmoji:       $('score-emoji'),
+  scoreGif:         $('score-gif'),
   scoreCount:       $('score-count'),
   scoreMessage:     $('score-message'),
+  scoreFilm:        $('score-film'),
   scoreName:        $('score-name'),
   btnResults:       $('btn-results'),
   btnReplay:        $('btn-replay'),
@@ -392,17 +393,19 @@ function renderScore() {
   const score = STATE.answers.filter(a => a.isCorrect).length;
   const data  = SCORE_DATA[score];
 
-  // Reset emoji animation
-  DOM.scoreEmoji.classList.remove('revealed');
-  DOM.scoreEmoji.textContent = data.emoji;
+  // Reset GIF animation
+  DOM.scoreGif.classList.remove('revealed');
+  DOM.scoreGif.src = data.gif;
+  DOM.scoreGif.alt = data.caption;
   DOM.scoreCount.textContent = '0';
-  DOM.scoreMessage.textContent = data.message;
+  DOM.scoreMessage.textContent = data.quote;
+  DOM.scoreFilm.textContent    = data.film;
   DOM.scoreName.textContent    = STATE.playerName
     ? `Bravo ${STATE.playerName} !`
     : '';
 
-  // Reveal emoji after a short delay
-  setTimeout(() => DOM.scoreEmoji.classList.add('revealed'), 200);
+  // Reveal GIF after a short delay
+  setTimeout(() => DOM.scoreGif.classList.add('revealed'), 200);
 
   // Count-up animation
   const duration  = 1200;
