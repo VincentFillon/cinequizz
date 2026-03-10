@@ -1,12 +1,10 @@
-# 🎬 Trouve le Film
+# 🎬 Ciné Quizz
 
-> Jeu de cinéma pour l'anniversaire — 10 énigmes, 50 affiches, qui sera le meilleur cinéphile ?
+> Quizz cinéma — 10 énigmes, 50 affiches, qui sera le meilleur cinéphile ?
 
 ## 🌐 Jouer en ligne
 
-**→ [https://TON_PSEUDO.github.io/trouves-le-film](https://TON_PSEUDO.github.io/trouves-le-film)**
-
-*(Remplace `TON_PSEUDO` par ton nom d'utilisateur GitHub une fois le dépôt créé)*
+**→ [https://VincentFillon.github.io/trouves-le-film](https://VincentFillon.github.io/cinequizz)**
 
 ---
 
