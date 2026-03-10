@@ -80,7 +80,7 @@ const SCORE_DATA = [
   { gif: 'https://media1.tenor.com/m/95AGbCSEeY4AAAAC/always-look-on-the-bright-side-of-life-monty-python.gif', quote: '"Always look on the bright side of life."',               film: 'Life of Brian' },
   { gif: 'https://media1.tenor.com/m/JNROTOuADA0AAAAC/gladiator-russell-crowe.gif',                             quote: '"Are you not entertained?"',                              film: 'Gladiator' },
   { gif: 'https://media1.tenor.com/m/7GBKPeSQZPUAAAAC/die-hard-bruce-willis.gif',                               quote: '"Yippee-ki-yay!"',                                        film: 'Die Hard' },
-  { gif: 'https://media1.tenor.com/m/RkO3ytNjWUEAAAAC/highlander-there-can-be-only-one.gif',                    quote: '"There can be only one."',                                film: 'Highlander' },
+  { gif: 'https://i.giphy.com/9Jmb2idg10qJSygvTQ.webp',                                                         quote: '"There can be only one."',                                film: 'Highlander' },
   { gif: 'https://media1.tenor.com/m/y0LVeURAIi4AAAAC/brothers-mission-from-god.gif',                           quote: '"We\'re on a mission from God."',                         film: 'The Blues Brothers' },
 ];
 
