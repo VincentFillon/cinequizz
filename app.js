@@ -58,16 +58,16 @@ const MOVIES = [
 ];
 
 const QUESTIONS = [
-  { id: 1,  enigma: 'Le Film le Plus Vu',                      answerId: 'the-blues-brothers-1980' },
-  { id: 2,  enigma: 'Mieux que Le Seigneur des Anneaux',       answerId: 'conan-the-barbarian-1982' },
-  { id: 3,  enigma: 'Souvenir de mon Grand-Père',              answerId: 'crime-busters-1977' },
-  { id: 4,  enigma: 'J\'étais Mal à l\'Aise',                  answerId: 'freaks-1932' },
-  { id: 5,  enigma: 'Le Meilleur Méchant',                     answerId: 'legend-1985' },
-  { id: 6,  enigma: 'Je Pleure à Chaque Fois',                 answerId: 'life-is-beautiful-1997' },
-  { id: 7,  enigma: 'Ma Sonnerie de Téléphone',                answerId: 'oldboy-2003' },
-  { id: 8,  enigma: 'Le Plus Grand Fou Rire',                  answerId: 'monty-python-and-the-holy-grail-1975' },
-  { id: 9,  enigma: 'IMMORTAN !',                              answerId: 'mad-max-1979' },
-  { id: 10, enigma: 'J\'avais pas l\'âge de le voir au cinéma', answerId: 'starship-troopers-1997' },
+  { id: 1,  enigma: 'Le Film le Plus Vu',                      answerHash: '16525cb4c54f4acf080bb1e0c98ceaa1a65a64d8d1e7289b9d36fcba0eb7cdc2' },
+  { id: 2,  enigma: 'Mieux que Le Seigneur des Anneaux',       answerHash: '211a7c33dad95c373d13babf993d8e15c4c8608d74acef2ca70d59d09b7a28b6' },
+  { id: 3,  enigma: 'Souvenir de mon Grand-Père',              answerHash: '627d471922790a2df97d5955b02711f6f4e98e424ff65c867fd729b1c441a5f7' },
+  { id: 4,  enigma: 'J\'étais Mal à l\'Aise',                  answerHash: 'd2ff6246cc6cf975dccb4b244c91b9de3a9d404f3e906048706f8b9392a8cd97' },
+  { id: 5,  enigma: 'Le Meilleur Méchant',                     answerHash: '85c566cbd04bee3642458a39eb75c2c5007a16d4410f9a2f3c3eb903ebf9f322' },
+  { id: 6,  enigma: 'Je Pleure à Chaque Fois',                 answerHash: '72e4ca63aa7238e9c04a587b7b116520e8875e26fee695debead54b622b4f8f4' },
+  { id: 7,  enigma: 'Ma Sonnerie de Téléphone',                answerHash: 'bf3e84bc8825a5f7b9c0621301f82472818d964d42cfada83787a12bee800a5f' },
+  { id: 8,  enigma: 'Le Plus Grand Fou Rire',                  answerHash: '9fccd49d68ea907e50fd2430d0c1e60ec26c544e0be611ce8ca2b65ed94c29d6' },
+  { id: 9,  enigma: 'IMMORTAN !',                              answerHash: 'd750576d00882242a0dbeb8ce0fbc323d6bc6ecfb1fd6178649fe5ba19676e48' },
+  { id: 10, enigma: 'J\'avais pas l\'âge de le voir au cinéma', answerHash: 'c7d3ad2465414374809899fc6e8579bde093f0bcabcfc66da829a47af5b0bb47' },
 ];
 
 const SCORE_DATA = [
@@ -87,6 +87,7 @@ const SCORE_DATA = [
 const STORAGE_KEY      = 'trouves-le-film';
 const STORAGE_VERSION  = 1;
 const CLUE_UNLOCKED_KEY = 'trouves-le-film-clue';
+const CLUE = atob('QklUVU1F');
 
 // ============================================================
 // STATE
@@ -166,6 +167,7 @@ const DOM = {
   btnResults:       $('btn-results'),
   btnReplay:        $('btn-replay'),
   clueBlock:        $('clue-block'),
+  clueWord:         $('clue-word'),
   confettiCanvas:   $('confetti-canvas'),
   // Results
   resultsSummary:   $('results-summary'),
@@ -219,6 +221,7 @@ function renderWelcome() {
 
 DOM.btnShowClue.addEventListener('click', () => {
   const visible = DOM.welcomeClueWord.style.display !== 'none';
+  if (!visible) DOM.welcomeClueWord.textContent = CLUE;
   DOM.welcomeClueWord.style.display = visible ? 'none' : '';
   DOM.btnShowClue.textContent = visible ? '🔑 Revoir mon indice' : '🔑 Masquer l\'indice';
 });
@@ -344,12 +347,17 @@ function closeBottomSheet() {
 DOM.btnCancel.addEventListener('click', closeBottomSheet);
 DOM.overlay.addEventListener('click', closeBottomSheet);
 
-DOM.btnConfirm.addEventListener('click', () => {
+async function sha256hex(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+DOM.btnConfirm.addEventListener('click', async () => {
   if (!STATE.selectedMovieId) return;
 
   const movieId   = STATE.selectedMovieId;
   const q         = QUESTIONS[STATE.currentQuestion];
-  const isCorrect = movieId === q.answerId;
+  const isCorrect = (await sha256hex(movieId)) === q.answerHash;
 
   closeBottomSheet();
 
@@ -423,6 +431,7 @@ function renderScore() {
       DOM.progressFill.style.width = '100%';
       if (score === 10) {
         try { localStorage.setItem(CLUE_UNLOCKED_KEY, '1'); } catch (_) {}
+        DOM.clueWord.textContent    = CLUE;
         DOM.clueBlock.style.display = '';
         setTimeout(launchConfetti, 300);
       } else {
